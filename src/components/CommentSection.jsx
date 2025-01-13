@@ -1,14 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 
 const CommentSection = ({ articleId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
-  const addComment = () => {
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/articles/${articleId}/comments`);
+        const data = await response.json();
+        setComments(data);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchComments();
+  }, [articleId]);
+
+  const addComment = async () => {
     if (newComment.trim()) {
-      setComments([...comments, newComment]);
-      setNewComment("");
+      try {
+        const response = await fetch(`http://localhost:5000/api/articles/${articleId}/comments`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ comment: newComment }),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to add comment');
+        }
+        const data = await response.json();
+        setComments([...comments, data]);
+        setNewComment("");
+      } catch (error) {
+        console.error("Error adding comment:", error);
+      }
     }
   };
 
