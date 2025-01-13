@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
+import { api_url } from "../api/articles";
 
 const CommentSection = ({ articleId }) => {
   const [comments, setComments] = useState([]);
@@ -8,7 +9,7 @@ const CommentSection = ({ articleId }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/articles/${articleId}/comments`);
+        const response = await fetch(`${api_url}/articles/${articleId}/comments`);
         const data = await response.json();
         setComments(data);
       } catch (error) {
@@ -22,7 +23,7 @@ const CommentSection = ({ articleId }) => {
   const addComment = async () => {
     if (newComment.trim()) {
       try {
-        const response = await fetch(`http://localhost:5000/api/articles/${articleId}/comments`, {
+        const response = await fetch(`${api_url}/articles/${articleId}/comments`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
